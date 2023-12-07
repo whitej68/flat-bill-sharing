@@ -1,3 +1,4 @@
+import webbrowser
 from fpdf import FPDF
 
 
@@ -64,14 +65,24 @@ class PdfReport:
         pdf.cell(w=150, h=25, txt=str(round(flatmate2.pays(bill, flatmate1), 2)), border=0, ln=1)
 
         pdf.output(self.filename)
+        webbrowser.open(self.filename)
 
 
-the_bill = Bill(amount=120, period="March 2023")
-john = Flatmate(name="John", days_in_house=20)
-mary = Flatmate(name="Mary", days_in_house=25)
+amount = float(input("Enter the bill amount: "))
+period = input("Enter the bill period? E.g December 2023: ")
 
-print("John pays: ", john.pays(bill=the_bill, flatmate2=mary))
-print("Mary pays: ", mary.pays(bill=the_bill, flatmate2=john))
+flatmate1_name = input("Enter the first flatmates name: ")
+flatmate1_days = int(input(f"How many days did {flatmate1_name} spend in the house?: "))
 
-pdf_report = PdfReport(filename="Report1.pdf")
-pdf_report.generate(flatmate1=john, flatmate2=mary, bill=the_bill)
+flatmate2_name = input("Enter the second flatmates name: ")
+flatmate2_days = int(input(f"How many days did {flatmate2_name} spend in the house?: "))
+
+the_bill = Bill(amount, period)
+flatmate1 = Flatmate(name=flatmate1_name, days_in_house=flatmate1_days)
+flatmate2 = Flatmate(name=flatmate2_name, days_in_house=flatmate2_days)
+
+print(f"{flatmate1.name} pays: ", round(flatmate1.pays(bill=the_bill, flatmate2=flatmate2), 2))
+print(f"{flatmate2.name} pays: ", round(flatmate2.pays(bill=the_bill, flatmate2=flatmate1), 2))
+
+pdf_report = PdfReport(filename=f"{the_bill.period}.pdf")
+pdf_report.generate(flatmate1, flatmate2, bill=the_bill)
